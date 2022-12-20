@@ -4,11 +4,11 @@ import numpy as np
 video = cv.VideoCapture("extendedvid.mp4")
 ref = cv.VideoCapture("reference.mp4")
 
-frame_height = int(video.get(4))
-frame_width = int(video.get(3))
+size = (1728,810)
 
-out = cv.VideoWriter('output.mp4', cv.VideoWriter_fourcc(*'MJPG'), 30.0, (640,480))
+out = cv.VideoWriter('output.mp4', cv.VideoWriter_fourcc(*'mp4v'), 30.0, size)
 
+print("\nProcessing video...")
 while True:
  
     ret, frame = video.read()
@@ -17,8 +17,8 @@ while True:
     if not ret or not ret2:
         break
  
-    frame = cv.resize(frame, (640, 480))
-    image = cv.resize(refFrame, (640, 480))
+    frame = cv.resize(frame, size)
+    image = cv.resize(refFrame, size)
     
     frame2 = cv.cvtColor(frame.copy(), cv.COLOR_BGR2HSV)
 
@@ -36,11 +36,16 @@ while True:
     # f = frame - res
     f = np.where(mask == 255, image, frame)
  
-    cv.imshow("mask", f)
+    #cv.imshow("mask", f)
+
+    # save
+    out.write(f)
  
     if cv.waitKey(25) == 27:
         break
- 
+
+print("\nDone! Check output.mp4")
+
 video.release()
 ref.release()
 out.release()
